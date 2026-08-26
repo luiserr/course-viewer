@@ -1,0 +1,46 @@
+<?php
+    /**
+     * Plantilla del módulo courseViewer para el repo school.
+     *
+     * Copiar a: <LXP_SCHOOL_CODE_ROOT>/School/courseViewer/index.php
+     *
+     * `npm run build` reemplaza automáticamente los valores de las constantes
+     * BUILD_JS y BUILD_CSS con los nombres reales generados por Vite. Mantener su
+     * declaración al inicio de línea y con comillas simples, o el parcheo fallará.
+     *
+     * URL del visor (mismos parámetros que content_viewer):
+     *   /courseViewer/?idInit=<socialId>&idMateria=<idGrupo>&fromMalla=1&riesgo=0
+     */
+    session_start();
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/paths.php';
+    require_once _HELPERS . 'Domain.php';
+
+    use Helpers\Domain;
+
+    $domain = Domain::getDomain(true);
+
+    // Sin sesión no hay árbol de curso que mostrar: al login, y de vuelta aquí.
+    if (!isset($_SESSION['LoGTrue']) || !in_array($_SESSION['LoGTrue'], array(80082, 80085), true)) {
+        header('Location: /index.php?redirect=' . urlencode(substr($_SERVER['REQUEST_URI'], 1)));
+        exit();
+    }
+
+    const BUILD_JS = '';
+    const BUILD_CSS = '';
+    const BUILD_CHUNK = '';
+?>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visor de Cursos</title>
+    <!-- Tipografías del visor legacy: Roboto (base) y Lato (pie de página) -->
+    <link rel="stylesheet" href="<?=$domain?>/content_viewer/assets/css/fonts.css">
+    <script type="module" crossorigin src="<?=$domain?>/courseViewer/assets/<?php echo BUILD_JS;?>"></script>
+    <link rel="stylesheet" crossorigin href="<?=$domain?>/courseViewer/assets/<?php echo BUILD_CSS;?>">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,303 @@
+/* Panel lateral y temario — sistema de diseño del mockup */
+
+.cv-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--cv-surface);
+  border-radius: var(--cv-radius-lg);
+  box-shadow: var(--cv-shadow-panel);
+}
+
+/* En el cajón el radio lo pone .cv-layout__sidebar (solo esquinas derechas) */
+@media (max-width: 1023.98px) {
+  .cv-sidebar {
+    border-radius: inherit;
+    box-shadow: none;
+  }
+}
+
+.cv-sidebar__head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 0 0 auto;
+  padding: 18px 18px 14px;
+}
+
+/* Botón que pliega y despliega el panel (escritorio) */
+.cv-sidebar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 9px 13px;
+  border: 0;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-surface-muted);
+  color: var(--cv-text-row);
+  font-family: var(--cv-font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--cv-duration) var(--cv-ease),
+    color var(--cv-duration) var(--cv-ease);
+}
+
+.cv-sidebar__toggle:hover {
+  background: var(--cv-primary-tint);
+  color: var(--cv-primary);
+}
+
+.cv-sidebar__toggleLabel {
+  white-space: nowrap;
+}
+
+/* Cabecera del cajón en compacto: rótulo + cierre */
+.cv-sidebar__drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cv-sidebar__drawerTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.cv-sidebar__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-surface-muted);
+  color: var(--cv-text-secondary);
+  cursor: pointer;
+  transition: background var(--cv-duration) var(--cv-ease),
+    color var(--cv-duration) var(--cv-ease);
+}
+
+.cv-sidebar__close:hover {
+  background: var(--cv-primary-tint);
+  color: var(--cv-primary);
+}
+
+/* Banner dentro de una caja 16/9, para que cualquier proporción de portada
+   quede centrada sin recortarse ni estirar el panel. */
+.cv-sidebar__banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-surface-muted);
+}
+
+.cv-sidebar__banner img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--cv-radius-sm);
+}
+
+.cv-sidebar__state {
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: var(--cv-text-secondary);
+}
+
+.cv-sidebar__state--error {
+  color: var(--cv-error);
+}
+
+/* ---------------- Riel plegado ---------------- */
+
+/*
+ * Plegado, el panel solo muestra su rótulo en vertical. Todo el riel es el
+ * área de clic que lo vuelve a desplegar.
+ */
+.cv-rail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 6px 0 32px;
+  border: 0;
+  background: none;
+  color: var(--cv-text-muted);
+  cursor: pointer;
+  transition: color var(--cv-duration) var(--cv-ease);
+}
+
+.cv-rail:hover {
+  color: var(--cv-primary);
+}
+
+.cv-rail__label {
+  writing-mode: vertical-rl;
+  font-family: var(--cv-font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ---------------- Temario ---------------- */
+
+.cv-sidebar__tree {
+  flex: 1 1 auto;
+  padding: 6px 10px 32px;
+}
+
+.cv-tree,
+.cv-tree__children {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-tree__item {
+  margin: 0;
+}
+
+.cv-tree__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  /* La sangría se calcula aquí (no en línea) para poder achicarla en móvil */
+  padding: 10px 12px;
+  padding-left: calc(12px + var(--cv-depth, 0) * var(--cv-tree-indent, 10px));
+  border: 0;
+  border-radius: var(--cv-radius);
+  background: none;
+  color: var(--cv-text-row);
+  font-family: var(--cv-font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--cv-duration) var(--cv-ease),
+    color var(--cv-duration) var(--cv-ease);
+}
+
+.cv-tree__row:hover {
+  background: var(--cv-surface-muted);
+}
+
+/* Unidades: fuertes, con su chevron */
+.cv-tree__row--tema {
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  color: var(--cv-text);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+/* Temas internos: rótulo tenue, no fila fuerte */
+.cv-tree__row--label {
+  color: var(--cv-text-faint);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.cv-tree__row--selected,
+.cv-tree__row--selected:hover {
+  background: var(--cv-primary-tint);
+  color: var(--cv-primary);
+  font-weight: 600;
+}
+
+.cv-tree__row--locked,
+.cv-tree__row--locked:hover {
+  background: none;
+  color: var(--cv-text-faint);
+  cursor: not-allowed;
+}
+
+.cv-tree__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+/* Evaluaciones: ámbar, como en el mockup */
+.cv-tree__badge {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 3px 7px;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-eval-bg);
+  color: var(--cv-eval);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Palomita de completado: círculo verde, o guinda en la fila activa */
+.cv-tree__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-done-bg);
+  color: var(--cv-done);
+}
+
+.cv-tree__check--current {
+  background: var(--cv-primary);
+  color: #fff;
+}
+
+.cv-chevron {
+  flex: 0 0 auto;
+  color: var(--cv-text-faint);
+  transition: transform var(--cv-duration) var(--cv-ease);
+}
+
+.cv-chevron--expanded {
+  transform: rotate(0deg);
+}
+
+.cv-chevron:not(.cv-chevron--expanded) {
+  transform: rotate(-90deg);
+}
+
+.cv-lock {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--cv-text-faint);
+}
+
+.cv-tree__empty {
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--cv-text-faint);
+}
+
+@media (max-width: 767.98px) {
+  .cv-sidebar__tree {
+    --cv-tree-indent: 8px;
+  }
+}

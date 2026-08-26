@@ -1,0 +1,204 @@
+/**
+ * Base y tokens del visor.
+ *
+ * El sistema de diseño sale del mockup de Claude Design
+ * (src/design/Visor de Curso SaberesMX.html): guinda institucional, grises
+ * cálidos, superficies blancas flotando sobre el fondo y esquinas suaves.
+ *
+ * Las tipografías las publica el backend en
+ * /content_viewer/assets/css/fonts.css — el index.php del módulo lo incluye.
+ * Esa hoja no trae Patria (la del mockup) y su Noto Sans está mal declarada;
+ * ver la nota sobre los tokens de fuente más abajo.
+ */
+
+:root {
+  /* Guinda institucional (gob.mx) */
+  --cv-primary: #691c32;
+  --cv-primary-hover: #9f2241;
+  /* Tinte del guinda: fila activa, migas y chips seleccionados */
+  --cv-primary-tint: #f6ebee;
+  /* Tinte más suave: tarjeta de bienvenida */
+  --cv-primary-tint-soft: #faf6f7;
+
+  --cv-bg: #f4f2f0;
+  --cv-surface: #fff;
+  /* Gris cálido de chips, botones de icono y la caja del banner */
+  --cv-surface-muted: #f6f4f2;
+
+  --cv-text: #241f20;
+  /* Texto de las hojas del temario */
+  --cv-text-row: #4a4445;
+  --cv-text-secondary: #5d5758;
+  --cv-text-muted: #7a7375;
+  --cv-text-faint: #a8a1a2;
+
+  --cv-divider: #f0edeb;
+  --cv-border: #e6e1de;
+  --cv-track: #eeeae7;
+  /* Borde de la pista de avance: 3.55:1 sobre blanco, el minimo de WCAG 1.4.11
+     para componentes. La pista sola daba 1.30:1 y no se distinguia del panel. */
+  --cv-track-edge: #8c8785;
+  --cv-scrollbar: #dcd7d3;
+
+  /* Completado: verde institucional, no el check gris del visor legacy */
+  --cv-done: #0f7b6c;
+  --cv-done-bg: #e7f0ed;
+  /* Evaluaciones: ámbar, antes azul */
+  --cv-eval: #8a6410;
+  --cv-eval-bg: #faf1de;
+  --cv-error: #d32f2f;
+
+  /*
+   * NO usar 'Noto Sans' aquí: el fonts.css del backend la declara apuntando a
+   * noto-sans-arabic.ttf (peso 400) y noto-sans-korean-bold.ttf (peso 700), y
+   * sin unicode-range, así que se aplicaría a todo el texto latino. Sus dígitos
+   * y sus glifos latinos tienen otro trazo y se leen desvaídos.
+   *
+   * De lo que publica el backend, Roboto es la única sans latina con dos pesos
+   * reales (Regular y Bold). Poppins tiene el mapeo roto (500 -> Black,
+   * 700 -> Regular) y Lato solo trae el 400.
+   *
+   * Patria va primero por si algún día se publica; hoy no está y se ignora.
+   */
+  --cv-font-heading: 'Patria', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cv-font-body: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --cv-radius-sm: 8px;
+  /* Filas del temario */
+  --cv-radius: 10px;
+  /* Sangría por nivel del temario */
+  --cv-tree-indent: 10px;
+  /* Botones y botones de icono */
+  --cv-radius-md: 12px;
+  /* Paneles y tarjetas */
+  --cv-radius-lg: 16px;
+  --cv-radius-xl: 18px;
+  --cv-radius-pill: 99px;
+
+  --cv-shadow-panel: 0 1px 3px rgba(36, 31, 32, 0.06);
+  --cv-shadow-sm: 0 1px 3px rgba(36, 31, 32, 0.08);
+  --cv-shadow-primary: 0 6px 16px rgba(105, 28, 50, 0.22);
+  --cv-shadow-drawer: 0 12px 40px rgba(36, 31, 32, 0.28);
+  --cv-shadow-menu: 0 12px 32px rgba(36, 31, 32, 0.18);
+
+  --cv-navbar-height: 66px;
+  --cv-header-height: 62px;
+  /* Hueco entre los paneles flotantes y el borde del fondo */
+  --cv-gap: 14px;
+
+  /* El temario cede ancho en tablet en vez de aplastar el contenido */
+  --cv-sidebar-width: clamp(18rem, 27vw, 25rem);
+  /* Riel plegado: solo los chips de unidad */
+  --cv-rail-width: 74px;
+
+  --cv-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --cv-duration: 0.22s;
+
+  /* dvh evita que la barra de direcciones del móvil recorte el visor */
+  --cv-viewport: 100vh;
+
+  color-scheme: light;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --cv-viewport: 100dvh;
+  }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --cv-navbar-height: 58px;
+    --cv-header-height: 56px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--cv-bg);
+  color: var(--cv-text);
+  font-family: var(--cv-font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bloquea el scroll de fondo mientras el temario está abierto como cajón */
+body.cv-scroll-locked {
+  overflow: hidden;
+}
+
+a {
+  color: var(--cv-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--cv-primary-hover);
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+code {
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--cv-radius-sm);
+  background: var(--cv-surface-muted);
+  font-size: 0.9em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cv-primary);
+  outline-offset: 2px;
+}
+
+.cv-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cv-scrollbar) transparent;
+  overscroll-behavior: contain;
+}
+
+.cv-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cv-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cv-scroll::-webkit-scrollbar-thumb {
+  background: var(--cv-scrollbar);
+  border-radius: var(--cv-radius-pill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

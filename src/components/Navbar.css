@@ -1,0 +1,175 @@
+/* Barra superior — sistema de diseño del mockup */
+
+.cv-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  height: var(--cv-navbar-height);
+  min-height: var(--cv-navbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 clamp(14px, 2.5vw, 26px);
+  background: var(--cv-primary);
+}
+
+.cv-navbar__brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 1;
+  padding: 8px 0;
+}
+
+.cv-navbar__brand img {
+  max-height: 100%;
+  height: calc(var(--cv-navbar-height) - 16px);
+  object-fit: contain;
+  object-position: left center;
+}
+
+.cv-navbar__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 14px;
+}
+
+/* Botón de inicio: cuadrado redondeado translúcido, como en el mockup */
+.cv-navbar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--cv-radius-md);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transition: background var(--cv-duration) var(--cv-ease);
+}
+
+.cv-navbar__icon:hover,
+.cv-navbar__icon:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.cv-navbar__user {
+  position: relative;
+}
+
+/* Píldora de usuario: avatar blanco + nombre, sin mayúsculas forzadas */
+.cv-navbar__userBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  max-width: 100%;
+  padding: 5px 15px 5px 5px;
+  border: 0;
+  border-radius: var(--cv-radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: var(--cv-font-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--cv-duration) var(--cv-ease);
+}
+
+.cv-navbar__userBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.cv-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--cv-radius-pill);
+  background: #fff;
+  color: var(--cv-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cv-avatar--photo {
+  object-fit: cover;
+}
+
+.cv-navbar__userName {
+  max-width: clamp(6rem, 18vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-navbar__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--cv-surface);
+  border-radius: var(--cv-radius-md);
+  box-shadow: var(--cv-shadow-menu);
+  animation: cv-menu-in var(--cv-duration) var(--cv-ease);
+}
+
+@keyframes cv-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cv-navbar__menu a {
+  display: block;
+  padding: 9px 12px;
+  border-radius: var(--cv-radius-sm);
+  color: var(--cv-text-row);
+  font-size: 13.5px;
+  text-decoration: none;
+}
+
+.cv-navbar__menu a:hover {
+  background: var(--cv-primary-tint);
+  color: var(--cv-primary);
+}
+
+.cv-navbar__menuSep {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--cv-divider);
+}
+
+.cv-navbar__login {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .cv-navbar__userName,
+  .cv-navbar__userBtn .cv-chevron {
+    display: none;
+  }
+
+  .cv-navbar__userBtn {
+    padding: 5px;
+  }
+}

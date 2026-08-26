@@ -1,0 +1,264 @@
+/* Área de contenido — sistema de diseño del mockup */
+
+.cv-frame {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 22px 24px 0;
+}
+
+/* ---------------- Migas de pan ---------------- */
+
+.cv-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.cv-crumbs__group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.cv-crumbs__chip {
+  flex: 0 0 auto;
+  max-width: 22ch;
+  overflow: hidden;
+  padding: 5px 11px;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-surface-muted);
+  color: var(--cv-text-muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-crumbs__chip--current {
+  max-width: 46ch;
+  background: var(--cv-primary-tint);
+  color: var(--cv-primary);
+  font-weight: 600;
+}
+
+.cv-crumbs__sep {
+  flex: 0 0 auto;
+  color: #c7c0c1;
+  font-size: 12px;
+}
+
+/* ---------------- Iframe del contenido ---------------- */
+
+.cv-frame__stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cv-frame__iframe {
+  flex: 1 1 auto;
+  width: 100%;
+  /* El alto lo reparte el flex; el mínimo solo evita que la barra de
+     navegación ahogue a la lección en pantallas muy bajas. */
+  min-height: 12rem;
+  border: 0;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-surface);
+}
+
+.cv-frame__loader {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-surface);
+  color: var(--cv-text-muted);
+  font-size: 13.5px;
+}
+
+.cv-spinner {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--cv-primary-tint);
+  border-top-color: var(--cv-primary);
+  border-radius: 50%;
+  animation: cv-spin 0.7s linear infinite;
+}
+
+@keyframes cv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------- Barra de navegación del contenido ---------------- */
+
+.cv-nav {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  padding: 14px 0 16px;
+}
+
+.cv-nav__next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-primary);
+  color: #fff;
+  font-family: var(--cv-font-body);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--cv-shadow-primary);
+  transition: background var(--cv-duration) var(--cv-ease),
+    transform var(--cv-duration) var(--cv-ease);
+}
+
+.cv-nav__next:hover {
+  background: var(--cv-primary-hover);
+}
+
+.cv-nav__next:active {
+  transform: translateY(1px);
+}
+
+.cv-nav__nextLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------- Aviso de contenido no embebible ---------------- */
+
+.cv-frame__notice {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 0;
+  padding: clamp(1.5rem, 6vh, 3rem) 1.5rem;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.cv-frame__notice h2 {
+  margin: 0;
+  max-width: 30ch;
+  font-family: var(--cv-font-heading);
+  font-weight: 400;
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.2;
+  color: var(--cv-text);
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.cv-frame__notice p {
+  margin: 0;
+  max-width: 48ch;
+  color: var(--cv-text-secondary);
+  line-height: 1.6;
+}
+
+/* ---------------- Bienvenida ---------------- */
+
+.cv-welcome {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: clamp(20px, 4vh, 40px) clamp(18px, 4vw, 64px) 36px;
+  overflow-y: auto;
+}
+
+.cv-welcome__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cv-welcome__title {
+  margin: 0 0 22px;
+  font-family: var(--cv-font-heading);
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.1;
+  color: var(--cv-text);
+  text-wrap: pretty;
+}
+
+.cv-welcome__card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(18px, 3vw, 30px);
+  border-radius: var(--cv-radius-xl);
+  background: var(--cv-primary-tint-soft);
+}
+
+.cv-welcome__tag {
+  align-self: flex-start;
+  padding: 5px 13px;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cv-welcome__card p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--cv-text);
+  font-size: clamp(16px, 1vw + 14px, 18.5px);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+/* Del segundo párrafo en adelante, el tono baja: en el mockup el primero es
+   la bienvenida y el resto es contexto. */
+.cv-welcome__card p ~ p {
+  color: var(--cv-text-secondary);
+  font-size: clamp(15px, 0.8vw + 13.5px, 17px);
+}
+
+.cv-welcome__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(24px, 4vh, 40px);
+}
+
+@media (max-width: 767.98px) {
+  .cv-frame {
+    padding: 12px 14px 0;
+  }
+
+  .cv-nav {
+    flex-wrap: wrap;
+  }
+
+  /* Ancho completo en móvil: a la derecha el título del siguiente contenido
+     queda ilegible. */
+  .cv-nav__next {
+    flex: 1 1 100%;
+  }
+}
