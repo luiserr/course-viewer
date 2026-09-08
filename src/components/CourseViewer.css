@@ -14,132 +14,6 @@
   background: var(--cv-bg);
 }
 
-/* ---------------- Barra del curso ---------------- */
-
-/*
- * Título y avance viven aquí, no en el panel lateral: con cursos de decenas de
- * contenidos el avance se iba de la vista al bajar por el temario.
- *
- * Va sobre superficie blanca, como los dos paneles: sobre el fondo cálido el
- * título quedaba deslavado y la pista del avance (#eeeae7 sobre #f4f2f0) era
- * casi del mismo valor que el fondo, así que no se leía.
- *
- * Es una sola barra para los dos modos: en compacto suma la hamburguesa,
- * porque ahí el panel es un cajón y su propio botón queda debajo del velo.
- */
-.cv-header {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex: 0 0 auto;
-  min-height: var(--cv-header-height);
-  margin: var(--cv-gap) var(--cv-gap) 0;
-  padding: 12px 20px;
-  border-radius: var(--cv-radius-lg);
-  background: var(--cv-surface);
-  box-shadow: var(--cv-shadow-panel);
-}
-
-.cv-header__toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  flex: 0 0 auto;
-  padding: 9px 13px;
-  border: 0;
-  border-radius: var(--cv-radius-md);
-  background: var(--cv-surface-muted);
-  color: var(--cv-text-row);
-  font-family: var(--cv-font-body);
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--cv-duration) var(--cv-ease),
-    color var(--cv-duration) var(--cv-ease);
-}
-
-.cv-header__toggle:hover {
-  background: var(--cv-primary-tint);
-  color: var(--cv-primary);
-}
-
-/*
- * Hasta dos líneas: cortar en una escondía la mitad del nombre del curso.
- *
- * En peso normal, como en el mockup: en negrita competía por la atención con
- * el contenido, que es lo que el alumno viene a leer. La presencia la da el
- * tamaño y el color, no el grosor.
- */
-.cv-header__title {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-  overflow: hidden;
-  color: var(--cv-text);
-  font-family: var(--cv-font-heading);
-  font-weight: 400;
-  font-size: clamp(16px, 0.7vw + 11px, 21px);
-  line-height: 1.25;
-  text-wrap: pretty;
-}
-
-.cv-header__progress {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 0 0 auto;
-}
-
-.cv-header__counts {
-  color: var(--cv-text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.cv-header__syncing {
-  font-style: italic;
-}
-
-/*
- * El borde es lo que hace perceptible el limite de la barra: una pista clara
- * sola queda en 1.30:1 sobre la tarjeta blanca y falla WCAG 1.4.11. Oscurecer
- * la pista no valia, porque entonces el relleno guinda (oscuro) perdia su
- * propio contraste contra ella.
- */
-.cv-progress {
-  width: 200px;
-  height: 12px;
-  overflow: hidden;
-  border: 1px solid var(--cv-track-edge);
-  border-radius: var(--cv-radius-pill);
-  background: var(--cv-track);
-}
-
-.cv-progress__bar {
-  height: 100%;
-  border-radius: inherit;
-  background: var(--cv-primary);
-  transition: width 0.4s var(--cv-ease);
-}
-
-/* El porcentaje en píldora guinda: es el dato que se busca de un vistazo */
-.cv-header__percent {
-  flex: 0 0 auto;
-  min-width: 4.5ch;
-  padding: 5px 12px;
-  border-radius: var(--cv-radius-pill);
-  background: var(--cv-primary-tint);
-  color: var(--cv-primary);
-  font-size: 14px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
 /* ---------------- Los dos paneles ---------------- */
 
 .cv-layout {
@@ -193,7 +67,7 @@
   justify-content: space-between;
   gap: 1rem;
   flex: 0 0 auto;
-  margin: 0 var(--cv-gap);
+  margin: var(--cv-gap) var(--cv-gap) 0;
   padding: 12px 12px 12px 16px;
   border-radius: var(--cv-radius-md);
   background: var(--cv-eval-bg);
@@ -350,27 +224,8 @@
  * útil. Espejo de COMPACT_QUERY en CourseViewer.jsx — mantener los dos en sinc.
  */
 @media (max-width: 1023.98px) {
-  /* En compacto manda el avance: el título cede ancho y el contador se va */
-  .cv-header {
-    gap: 12px;
-    padding: 10px 14px;
-  }
-
-  .cv-header__title {
-    font-size: 15px;
-  }
-
-  .cv-progress {
-    width: 84px;
-  }
-
-  .cv-header__counts {
-    display: none;
-  }
-
   .cv-layout {
     display: block;
-    padding: 0 var(--cv-gap) var(--cv-gap);
   }
 
   /* Absoluto contra .cv-layout (no fijo al viewport): así el cajón se alinea
@@ -413,10 +268,6 @@
   .cv-layout__content {
     width: 100%;
     height: 100%;
-  }
-
-  .cv-guard {
-    margin: 0 var(--cv-gap) var(--cv-gap);
   }
 }
 

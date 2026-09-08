@@ -56,11 +56,20 @@
 
 /* ---------------- Iframe del contenido ---------------- */
 
+/* El redondeo vive aquí y no en el iframe: un iframe con border-radius recorta
+   su propio contenido en las esquinas, y las páginas embebidas (el TCU, el
+   examen) escriben el título pegado al borde superior izquierdo — el arco se
+   comía las primeras letras. Con el padding, la curva pasa por el relleno
+   blanco del contenedor y el contenido queda entero. */
 .cv-frame__stage {
   position: relative;
   display: flex;
   flex: 1 1 auto;
   min-height: 0;
+  padding: 10px;
+  border-radius: var(--cv-radius-md);
+  background: var(--cv-surface);
+  overflow: hidden;
 }
 
 .cv-frame__iframe {
@@ -70,13 +79,12 @@
      navegación ahogue a la lección en pantallas muy bajas. */
   min-height: 12rem;
   border: 0;
-  border-radius: var(--cv-radius-md);
   background: var(--cv-surface);
 }
 
 .cv-frame__loader {
   position: absolute;
-  inset: 0;
+  inset: 10px;
   z-index: 1;
   display: flex;
   align-items: center;

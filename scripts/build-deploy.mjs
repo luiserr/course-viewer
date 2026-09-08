@@ -31,8 +31,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
 
-/** Ruta del módulo relativa a la raíz de schoolCode (School/courseViewer) */
-const DEFAULT_TARGET_RELATIVE_PATH = join('School', 'courseViewer');
+/** Ruta del módulo relativa a la raíz de schoolCode (School/content_viewer) */
+const DEFAULT_TARGET_RELATIVE_PATH = join('School', 'content_viewer');
 
 /** Variables que el script lee del .env local */
 const ENV_KEYS = ['LXP_SCHOOL_CODE_ROOT', 'LXP_TARGET_RELATIVE_PATH'];
@@ -127,7 +127,7 @@ function readBuildAssetNames(distDir) {
 
   // Solo interesan los assets que genera el build: Vite los emite planos, justo
   // dentro de `assets/`. index.html también enlaza hojas del backend (las
-  // tipografías del visor, en /content_viewer/assets/css/fonts.css), así que no
+  // tipografías del visor, en /content_viewer_v2/assets/css/fonts.css), así que no
   // basta con exigir "assets/" ni con tomar la primera coincidencia: hay que
   // pedir que el archivo cuelgue directamente de assets/, sin subcarpetas.
   const isBuildAsset = (href, extension) =>

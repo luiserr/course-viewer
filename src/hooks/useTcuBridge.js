@@ -21,14 +21,25 @@ import { useEffect, useRef } from 'react';
  *
  * @param {{
  *   flatContent: Array,
+ *   currentNode: object|null,
+ *   currentResNum: number,
  *   onSelectNode: (node: object) => void,
  *   onFinish?: () => void,
- *   onCheck?: (resNum: number) => void
+ *   onCheck?: (resNum: number) => void,
+ *   onContentSeen?: (node: object) => void
  * }} params
  */
-export function useTcuBridge({ flatContent, onSelectNode, onFinish, onCheck }) {
+export function useTcuBridge({
+  flatContent,
+  currentNode,
+  currentResNum = 0,
+  onSelectNode,
+  onFinish,
+  onCheck,
+  onContentSeen
+}) {
   const latest = useRef(null);
-  latest.current = { flatContent, onSelectNode, onFinish, onCheck };
+  latest.current = { flatContent, currentNode, currentResNum, onSelectNode, onFinish, onCheck, onContentSeen };
 
   useEffect(() => {
     const previo = {
@@ -38,10 +49,30 @@ export function useTcuBridge({ flatContent, onSelectNode, onFinish, onCheck }) {
 
     /** Abre el contenido número `resNum` del temario (1-based). */
     window.goToResource = (resNum) => {
-      const { flatContent: contenidos, onSelectNode: seleccionar, onFinish: terminar } =
-        latest.current;
+      const {
+        flatContent: contenidos,
+        onSelectNode: seleccionar,
+        onFinish: terminar,
+        onContentSeen: contenidoVisto,
+        currentNode: actual,
+        currentResNum: posicionActual
+      } = latest.current;
       const indice = Number(resNum) - 1;
       if (!Number.isInteger(indice) || indice < 0) return;
+
+      /*
+       * Hacia delante = el alumno terminó el contenido.
+       *
+       * tcu.js solo pide el contenido siguiente desde la ÚLTIMA diapositiva
+       * (nextModulo con cont === max); desde la primera pide el anterior, con
+       * un resNum menor. Ese salto hacia delante es la única señal fiable de
+       * "ya lo vio entero" que da el TCU: su propio aviso de completitud
+       * (checkNum) exige que todos los módulos estén ya marcados, que es justo
+       * lo que aquí falta.
+       */
+      if (actual && posicionActual > 0 && Number(resNum) > posicionActual) {
+        contenidoVisto?.(actual);
+      }
 
       const destino = contenidos[indice];
       // Fuera de rango es el final del temario: el TCU pide el siguiente y ya

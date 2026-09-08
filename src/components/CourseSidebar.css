@@ -19,6 +19,7 @@
   }
 }
 
+/* Botón de plegado y portada del curso: esto sí se va con el scroll */
 .cv-sidebar__head {
   display: flex;
   flex-direction: column;
@@ -110,6 +111,106 @@
   border-radius: var(--cv-radius-sm);
 }
 
+/* ---------------- Nombre y avance del curso ---------------- */
+
+/*
+ * Pegado arriba mientras el temario corre por debajo: en un curso de 95
+ * contenidos, bajando por la lista se perdían de vista el nombre del curso y
+ * el avance, que son justo lo que se consulta de reojo. La portada no se
+ * queda: es lo más alto del panel y lo menos útil una vez dentro del curso.
+ *
+ * El fondo opaco es obligatorio — por debajo pasan la portada y las filas.
+ * El filete inferior es lo que separa este bloque del temario: sin él, el
+ * nombre del curso y la primera unidad se leen como dos filas de la misma
+ * lista.
+ */
+.cv-sidebar__course {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  flex: 0 0 auto;
+  padding: 12px 18px 14px;
+  background: var(--cv-surface);
+  border-bottom: 1px solid var(--cv-divider);
+}
+
+/*
+ * Hasta tres líneas: los nombres de curso reales pasan de los 60 caracteres y
+ * cortarlos antes esconde justo la parte que los distingue (el nombre completo
+ * queda igualmente en el atributo title y en la bienvenida).
+ *
+ * Es el elemento más fuerte del panel a propósito: encabeza el temario, así que
+ * pesa más que las unidades (600 a 14.5 px) sin llegar a gritar.
+ */
+.cv-sidebar__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  margin: 0;
+  overflow: hidden;
+  color: var(--cv-text);
+  font-family: var(--cv-font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+
+.cv-sidebar__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cv-sidebar__progressTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cv-sidebar__counts {
+  color: var(--cv-text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.cv-sidebar__syncing {
+  font-style: italic;
+}
+
+.cv-sidebar__percent {
+  flex: 0 0 auto;
+  color: var(--cv-primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * El borde es lo que hace perceptible el límite de la barra: una pista clara
+ * sola queda en 1.30:1 sobre la tarjeta blanca y falla WCAG 1.4.11. Oscurecer
+ * la pista no valía, porque entonces el relleno guinda (oscuro) perdía su
+ * propio contraste contra ella.
+ */
+.cv-sidebar__track {
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid var(--cv-track-edge);
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-track);
+}
+
+.cv-sidebar__trackBar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cv-primary);
+  transition: width 0.4s var(--cv-ease);
+}
+
 .cv-sidebar__state {
   padding: 8px 12px;
   font-size: 13.5px;
@@ -157,7 +258,7 @@
 
 .cv-sidebar__tree {
   flex: 1 1 auto;
-  padding: 6px 10px 32px;
+  padding: 10px 10px 32px;
 }
 
 .cv-tree,
@@ -199,7 +300,7 @@
   background: var(--cv-surface-muted);
 }
 
-/* Unidades: fuertes, con su chevron */
+/* Unidades: fuertes, con su carpeta delante */
 .cv-tree__row--tema {
   align-items: center;
   justify-content: space-between;
@@ -238,42 +339,124 @@
   text-wrap: pretty;
 }
 
-/* Evaluaciones: ámbar, como en el mockup */
+/*
+ * Evaluaciones: disco gris cálido con el portapapeles, del mismo tamaño que la
+ * palomita de completado para que las dos marcas de la fila pesen igual.
+ *
+ * Ya no es ámbar: con el guinda de la marca y el verde de completado, un tercer
+ * acento en cada fila dejaba el temario hecho un semáforo y tiraba de la vista
+ * hacia lo que aún no has hecho. En gris la marca informa sin gritar, y el color
+ * de la columna derecha (las palomitas) vuelve a significar una sola cosa.
+ */
 .cv-tree__badge {
-  flex: 0 0 auto;
-  margin-top: 2px;
-  padding: 3px 7px;
-  border-radius: var(--cv-radius-pill);
-  background: var(--cv-eval-bg);
-  color: var(--cv-eval);
-  font-size: 10px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* Palomita de completado: círculo verde, o guinda en la fila activa */
-.cv-tree__check {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  margin-top: 1px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
   border-radius: var(--cv-radius-pill);
-  background: var(--cv-done-bg);
-  color: var(--cv-done);
+  background: var(--cv-surface-muted);
+  color: var(--cv-text-secondary);
 }
 
-.cv-tree__check--current {
-  background: var(--cv-primary);
+/* Sobre la fila activa (tinte guinda) el gris cálido se confunde: se cambia por
+   blanco, que ahí sí despega, y el icono toma el guinda de la fila. */
+.cv-tree__row--selected .cv-tree__badge {
+  background: #fff;
+  color: var(--cv-primary);
+}
+
+/*
+ * Ranura de estado al final de cada hoja: palomita, candado o nada. Ancho fijo
+ * y siempre presente para que las palomitas formen columna — antes cada una
+ * caía donde la dejara la etiqueta ("Eval", "Sondeo"…) de su fila.
+ */
+.cv-tree__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  /* Alto y desplazamiento de la primera línea del título (14px × 1.45), para
+     que la palomita quede a su altura y no arriba del bloque de texto. */
+  height: 20px;
+  margin-top: 1px;
+}
+
+/*
+ * Completado: disco verde macizo con la palomita en blanco. El verde pálido de
+ * antes (#e7f0ed) se perdía contra la tarjeta blanca y hacía ver el curso
+ * "apagado"; macizo da 5.2:1 contra el panel y contra la palomita, y es lo
+ * único de color en la columna, así que el avance se lee de un vistazo.
+ *
+ * Verde también en la fila abierta: el verde significa "visto", y eso no
+ * depende de dónde esté parado el alumno.
+ */
+.cv-tree__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--cv-radius-pill);
+  background: var(--cv-done);
   color: #fff;
+}
+
+/*
+ * Sin completar: palomita en hueco, gris. El color de la marca dice si el
+ * contenido está visto o no, y nada más — antes la fila abierta la teñía de
+ * guinda, así que un contenido ya visto parecía cambiar de estado con solo
+ * abrirlo.
+ *
+ * Gris de --cv-text-muted (no el tenue): el trazo tiene que llegar a 3:1 tanto
+ * sobre el blanco del panel como sobre el tinte guinda de la fila activa, que
+ * es justo donde se pinta.
+ */
+.cv-tree__check--pending {
+  background: none;
+  border: 1.5px solid var(--cv-text-muted);
+  color: var(--cv-text-muted);
 }
 
 .cv-chevron {
   flex: 0 0 auto;
   color: var(--cv-text-faint);
   transition: transform var(--cv-duration) var(--cv-ease);
+}
+
+/*
+ * Carpeta del tema: ranura fija delante del título. Ancho fijo para que el
+ * título no se corra al pasar de carpeta cerrada a abierta (los dos dibujos
+ * miden lo mismo, pero la ranura lo garantiza) y para que las filas de tema
+ * arranquen todas en la misma columna.
+ */
+.cv-tree__folder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  color: var(--cv-text-secondary);
+}
+
+/* Los temas internos son rótulos tenues: la carpeta baja el tono con la fila */
+.cv-tree__row--label .cv-tree__folder {
+  color: var(--cv-text-faint);
+}
+
+/*
+ * Las hojas no llevan icono, pero sí su hueco: sin él el título de un contenido
+ * caía a la izquierda del título de su propio tema (la sangría de un nivel es
+ * menor que la carpeta) y la jerarquía se leía al revés.
+ */
+.cv-tree__row--leaf::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 20px;
 }
 
 .cv-chevron--expanded {
@@ -286,7 +469,6 @@
 
 .cv-lock {
   flex: 0 0 auto;
-  margin-top: 1px;
   color: var(--cv-text-faint);
 }
 

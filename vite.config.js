@@ -8,7 +8,7 @@ import react from '@vitejs/plugin-react'
  * Debe coincidir con `targetRelativePath` de deploy.config.json / scripts/build-deploy.mjs,
  * porque de ella depende la base con la que se resuelven los assets en producción.
  */
-const MODULE_DIR = 'courseViewer'
+const MODULE_DIR = 'content_viewer'
 
 /** Target por defecto del proxy de desarrollo (entorno local de pruebas) */
 const DEFAULT_PROXY_TARGET = 'http://saberesmx.pruebas.local/src'
@@ -22,7 +22,11 @@ const DEFAULT_PROXY_TARGET = 'http://saberesmx.pruebas.local/src'
 const DOMAIN_PROXY_PATHS = [
   '/tcu',
   '/images',
-  '/content_viewer',
+  // El visor legacy, que ahora vive en /content_viewer_v2 porque esta SPA se
+  // quedó con /content_viewer. Ojo con volver a poner `/content_viewer` aquí:
+  // Vite compara con startsWith, así que se tragaría también /content_viewer_v2
+  // y —peor— en producción es la ruta de esta misma SPA.
+  '/content_viewer_v2',
   '/show_quiz.php',
   // show_quiz.php no pinta el examen: redirige a exams.php (módulo nuevo, si la
   // universidad tiene el 815) o a permiso_quiz.php (rama legacy), y esa rebota de
@@ -172,7 +176,7 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [react()],
 
-    // En build los assets se sirven desde /courseViewer/assets/... en el backend PHP
+    // En build los assets se sirven desde /content_viewer/assets/... en el backend PHP
     base: command === 'build' ? `/${MODULE_DIR}/` : '/',
 
     build: {

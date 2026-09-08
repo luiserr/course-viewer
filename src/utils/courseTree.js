@@ -13,9 +13,13 @@
 /** Tipos de nodo que se abren como evaluación */
 export const EXAM_TYPES = new Set(['examen', 'sondeo', 'encuesta']);
 
-/** Etiqueta corta que se pinta junto al título de una evaluación */
-export const EXAM_BADGES = {
-  examen: 'Eval',
+/**
+ * Cómo se llama cada tipo de evaluación. El temario ya no lo escribe en la fila
+ * (marca esas filas con un icono), así que esto es el nombre accesible del
+ * icono y su tooltip: tiene que leerse solo, sin abreviar.
+ */
+export const EXAM_LABELS = {
+  examen: 'Evaluación',
   sondeo: 'Sondeo',
   encuesta: 'Encuesta'
 };

@@ -1,15 +1,15 @@
 <?php
     /**
-     * Plantilla del módulo courseViewer para el repo school.
+     * Plantilla del módulo content_viewer para el repo school.
      *
-     * Copiar a: <LXP_SCHOOL_CODE_ROOT>/School/courseViewer/index.php
+     * Copiar a: <LXP_SCHOOL_CODE_ROOT>/School/content_viewer/index.php
      *
      * `npm run build` reemplaza automáticamente los valores de las constantes
      * BUILD_JS y BUILD_CSS con los nombres reales generados por Vite. Mantener su
      * declaración al inicio de línea y con comillas simples, o el parcheo fallará.
      *
      * URL del visor (mismos parámetros que content_viewer):
-     *   /courseViewer/?idInit=<socialId>&idMateria=<idGrupo>&fromMalla=1&riesgo=0
+     *   /content_viewer/?idInit=<socialId>&idMateria=<idGrupo>&fromMalla=1&riesgo=0
      */
     session_start();
     require_once $_SERVER['DOCUMENT_ROOT'] . '/paths.php';
@@ -36,9 +36,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Visor de Cursos</title>
     <!-- Tipografías del visor legacy: Roboto (base) y Lato (pie de página) -->
-    <link rel="stylesheet" href="<?=$domain?>/content_viewer/assets/css/fonts.css">
-    <script type="module" crossorigin src="<?=$domain?>/courseViewer/assets/<?php echo BUILD_JS;?>"></script>
-    <link rel="stylesheet" crossorigin href="<?=$domain?>/courseViewer/assets/<?php echo BUILD_CSS;?>">
+    <link rel="stylesheet" href="<?=$domain?>/content_viewer_v2/assets/css/fonts.css">
+    <script type="module" crossorigin src="<?=$domain?>/content_viewer/assets/<?php echo BUILD_JS;?>"></script>
+    <link rel="stylesheet" crossorigin href="<?=$domain?>/content_viewer/assets/<?php echo BUILD_CSS;?>">
   </head>
   <body>
     <div id="root"></div>

@@ -9,7 +9,7 @@ import {
   getLogoutUrl,
   getProfileUrl
 } from '../config/api';
-import { ChevronIcon, HomeIcon } from './Icons';
+import { BurgerIcon, ChevronIcon, HomeIcon } from './Icons';
 import './Navbar.css';
 
 /** Iniciales para el avatar cuando la sesión no trae foto. */
@@ -24,8 +24,21 @@ function initialsOf(user) {
 /**
  * Barra superior de SaberesMX: logo, inicio y menú de usuario.
  * Réplica de content_viewer/partials/navigationBar.php.
+ *
+ * El nombre del curso y su avance no viven aquí, sino en la tarjeta del panel
+ * lateral, bajo la portada del curso.
+ *
+ * En compacto suma la hamburguesa del temario, porque ahí el panel es un cajón
+ * y su propio botón queda debajo del velo.
+ *
+ * @param {{showSidebarToggle?: boolean, sidebarOpen?: boolean,
+ *   onToggleSidebar?: () => void}} props
  */
-export default function Navbar() {
+export default function Navbar({
+  showSidebarToggle = false,
+  sidebarOpen = false,
+  onToggleSidebar
+}) {
   const { user, isAuthenticated, userName } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -49,9 +62,24 @@ export default function Navbar() {
 
   return (
     <header className="cv-navbar">
-      <a className="cv-navbar__brand" href={getHomeUrl()}>
-        <img src={getAssetUrl(SABERES_LOGO)} alt="SaberesMX" />
-      </a>
+      <div className="cv-navbar__lead">
+        {showSidebarToggle && (
+          <button
+            type="button"
+            className="cv-navbar__icon"
+            aria-expanded={sidebarOpen}
+            aria-controls="cv-sidebar"
+            aria-label="Mostrar u ocultar el temario"
+            onClick={onToggleSidebar}
+          >
+            <BurgerIcon />
+          </button>
+        )}
+
+        <a className="cv-navbar__brand" href={getHomeUrl()}>
+          <img src={getAssetUrl(SABERES_LOGO)} alt="SaberesMX" />
+        </a>
+      </div>
 
       <nav className="cv-navbar__actions" aria-label="Acciones de la cuenta">
         <a className="cv-navbar__icon" href={getHomeUrl()} title="Inicio" aria-label="Inicio">
@@ -92,7 +120,7 @@ export default function Navbar() {
             )}
           </div>
         ) : (
-          <a className="cv-navbar__login" href={getLoginUrl('courseViewer')}>
+          <a className="cv-navbar__login" href={getLoginUrl('content_viewer')}>
             Iniciar sesión
           </a>
         )}

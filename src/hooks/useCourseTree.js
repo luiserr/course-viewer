@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   fetchCourseSummary,
   fetchCourseTree,
+  markPostComplete,
   syncCourseProgress
 } from '../services/courseViewerService';
 import { handleApiError } from '../services/http';
@@ -12,6 +13,9 @@ import {
   nextContentNode
 } from '../utils/courseTree';
 
+/** Mínimo entre recálculos disparados por volver a la pestaña (ms). */
+const FOCUS_SYNC_INTERVAL = 5000;
+
 /**
  * Estado del visor de curso: árbol, avance, selección y sincronización.
  *
@@ -19,8 +23,10 @@ import {
  *   1. Al salir de un contenido, sea del tipo que sea (elegir otro, volver a la
  *      bienvenida, o cerrar la pestaña).
  *   2. Cuando el iframe del TCU avisa `CONTENT_COMPLETED` por postMessage.
- * En ambos casos se hace POST del curso (sin porcentaje) y se relee el árbol,
- * porque los checks y el % son los que devuelve el servidor.
+ *   3. Al volver a esta pestaña, porque el contenido pudo completarse fuera de
+ *      ella (el SCORM se abre en otra pestaña; ver el efecto de más abajo).
+ * En los tres casos se hace POST del curso (sin porcentaje) y se relee el
+ * árbol, porque los checks y el % son los que devuelve el servidor.
  *
  * @param {number|string|null} idGrupo
  * @param {{enabled?: boolean}} [options] - enabled=false mientras no hay sesión
@@ -119,6 +125,32 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
   }, [enabled, idGrupo, loadTree]);
 
   /**
+   * El alumno terminó un contenido con diapositivas: se dan por vistas las que
+   * no pueden marcarse solas.
+   *
+   * Las diapositivas de texto y recurso las marca tcu_actions.php al pintarlas,
+   * pero la de SCORM depende de que el paquete reporte su estado, y hay
+   * paquetes que no reportan nunca. Como un TCU solo está completo si TODOS sus
+   * módulos lo están, uno de esos dejaba el contenido sin palomita por mucho
+   * que el alumno lo recorriera entero.
+   *
+   * El servidor decide qué se marca y qué no: examen, tarea, encuesta y H5P
+   * conservan su regla (ver Mobile/Repositories/CourseTree::markTcuComplete).
+   */
+  const markContentSeen = useCallback(
+    async (node) => {
+      if (!enabled || !idGrupo || node?.type !== 'tcu') return;
+      try {
+        await markPostComplete({ idPost: node.id, idGrupo });
+      } catch (err) {
+        console.warn('[useCourseTree] no se pudo marcar el contenido:', err.message);
+      }
+      return syncProgress();
+    },
+    [enabled, idGrupo, syncProgress]
+  );
+
+  /**
    * Selecciona un contenido. Si el anterior era un TCU, primero sincroniza su
    * avance (el TCU registró sus slides mientras el alumno lo recorría).
    */
@@ -165,6 +197,37 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
     return () => window.removeEventListener('message', onMessage);
   }, [syncProgress]);
 
+  /*
+   * Al volver a esta pestaña, recalcular.
+   *
+   * Un SCORM no se ve aquí dentro: el TCU pinta un botón "Ver Scorm" que lo
+   * abre en otra pestaña (tcu_actions.php::getScorm → scorm_az.php), y es esa
+   * pestaña la que registra la completitud. Al volver, esta ya tiene el árbol
+   * viejo en pantalla y sin esto no se enteraría hasta que el alumno cambiara
+   * de contenido: la palomita del SCORM (y del TCU que lo contiene) aparecía
+   * "tarde".
+   *
+   * Con estrangulamiento porque alternar pestañas es barato y el POST no:
+   * course-progress responde 429 a las ráfagas.
+   */
+  const lastFocusSync = useRef(0);
+  useEffect(() => {
+    const onBackToTab = () => {
+      if (document.visibilityState !== 'visible') return;
+      if (!selectedNodeRef.current) return;
+      const now = Date.now();
+      if (now - lastFocusSync.current < FOCUS_SYNC_INTERVAL) return;
+      lastFocusSync.current = now;
+      syncProgress();
+    };
+    document.addEventListener('visibilitychange', onBackToTab);
+    window.addEventListener('focus', onBackToTab);
+    return () => {
+      document.removeEventListener('visibilitychange', onBackToTab);
+      window.removeEventListener('focus', onBackToTab);
+    };
+  }, [syncProgress]);
+
   // Al cerrar o recargar la pestaña estando dentro de un TCU, avisar al
   // servidor para que el avance quede recalculado. sendBeacon no sirve aquí:
   // el endpoint necesita el header x-authentication, que beacon no permite.
@@ -190,6 +253,7 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
     selectedNode,
     upNext,
     selectNode,
+    markContentSeen,
     clearSelection,
     notify: setNotice,
     dismissNotice: () => setNotice(null),

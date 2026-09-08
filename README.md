@@ -69,7 +69,17 @@ calcula el servidor en cada consulta (Plan B de
   (`#aaaaaa`) si no. Un TCU está completo cuando **todas** sus slides no-examen
   lo están — eso ya lo resuelve el servidor.
 - La completitud de las slides la registra el propio TCU (`tcu_actions.php`)
-  dentro del iframe, no este front.
+  dentro del iframe, no este front. La de una evaluación la registra el módulo de
+  exámenes al finalizarla (`AppExamsHandlersFinishExam`, que escribe la fila
+  igual que hacía `show_quiz.php` en la ruta legacy).
+- **Ojo con los dos criterios del servidor para una evaluación embebida en un
+  TCU:** `mobile/course-tree` —de donde salen la barra, el contador y los
+  checks— exige una fila en `persona_has_post_completo` por **cada** submódulo
+  del TCU, incluida la evaluación; `saberes/course-progress` en cambio la da por
+  buena con una calificación `>= CaliNota` en `persona_has_calificacion_examen`.
+  Con el módulo 815 (SPA `exams.php`) el alumno nunca pasaba por `show_quiz.php`,
+  que era quien escribía esa fila, así que terminar la evaluación movía el avance
+  que persiste `course-progress` pero no el que muestra el visor.
 - El avance se recalcula al **salir de cualquier contenido**: al elegir otro, al
   volver a la bienvenida, al cerrar la pestaña (`pagehide`), o cuando el iframe
   avisa `postMessage({type:'CONTENT_COMPLETED'})` — mismo contrato que la app
@@ -107,8 +117,11 @@ está, `show_quiz.php` responde "No tiene permiso para contestar el examen. No
 pertenece a la clase". Eso no es un problema de sesión — es inscripción.
 
 Un examen que ya está enlazado a un TCU (`hasExam` + `examId`) se quita del
-temario para no listarlo dos veces; se llega a él con el botón "Ir a la
-evaluación" del propio TCU. Los nodos con `locked` (precondiciones pendientes) no
+temario para no listarlo dos veces: `hasExam` sale de que el examen sea un
+submódulo del TCU (`tcu_modulo` con fila en `examen`), así que ya viene embebido
+como una de sus slides y se llega a él pasando páginas dentro del propio TCU. Por
+eso el visor no pinta ningún botón "Ir a la evaluación": abriría lo mismo que el
+alumno ya tiene delante. Los nodos con `locked` (precondiciones pendientes) no
 se pueden abrir y muestran un candado.
 
 ### Navegación desde dentro del TCU

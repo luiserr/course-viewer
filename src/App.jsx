@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import CourseViewer from './components/CourseViewer';
+import { useBlockContextMenu } from './hooks/useBlockContextMenu';
 
 /**
  * Lee los parámetros del visor de la URL, con los mismos nombres que usa el
- * visor legacy: /courseViewer/?idInit=<socialId>&idMateria=<idGrupo>&riesgo=0
+ * visor legacy: /content_viewer/?idInit=<socialId>&idMateria=<idGrupo>&riesgo=0
  *
  * En la BD `idmateria` y `idgrupo` son el mismo valor, así que `idMateria` es
  * el id del curso que esperan los endpoints (`idGrupo` / `course_id`).
@@ -23,6 +24,9 @@ function useViewerParams() {
 
 export default function App() {
   const { idGrupo, socialId, riesgo, courseName } = useViewerParams();
+
+  // Mismo bloqueo del menú contextual que el visor legacy
+  useBlockContextMenu();
 
   return (
     <CourseViewer

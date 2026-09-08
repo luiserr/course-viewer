@@ -177,7 +177,7 @@ export function getApiEndpoint(endpointKey) {
  * URL de login. Vive en el dominio (no bajo `/src`), por eso no usa buildApiUrl.
  * @param {string} [redirect] - módulo al que regresar tras el login
  */
-export function getLoginUrl(redirect = 'courseViewer') {
+export function getLoginUrl(redirect = 'content_viewer') {
   return `${getBaseDomain()}/index.php?login=true&redirect=${encodeURIComponent(redirect)}`;
 }
 
@@ -189,7 +189,13 @@ export function getRegisterUrl() {
 }
 
 /**
- * URL del visor de curso para el aprendiz.
+ * URL del visor de curso para el aprendiz — este mismo visor.
+ *
+ * `/content_viewer/` es ahora el shell de esta SPA (antes era el visor legacy,
+ * que se movió a `/content_viewer_v2/`). Los parámetros no cambian: son los que
+ * lee App.jsx, y los mismos que ya usan los enlaces de perfil.php, catalog y
+ * courseManager.
+ *
  * @param {string|number} socialId - socialId del curso → query idInit
  * @param {string|number} matterId - id de la materia → query idMateria
  */
@@ -200,7 +206,7 @@ export function URL_COURSE(socialId, matterId) {
 
 // ─── URLs del contenido del curso (páginas PHP embebidas en el iframe) ───────
 //
-// Son las mismas rutas que usa el visor legacy (content_viewer/partials/config.php
+// Son las mismas rutas que usa el visor legacy (content_viewer_v2/partials/config.php
 // y assets/js/script.js). Salvo el TCU, se autentican con la cookie de sesión
 // PHP: el módulo vive en el mismo dominio, así que no necesitan el
 // `movilws`/`cr` de la app. El TCU además acepta el JWT (ver getTcuUrl), que es
@@ -268,11 +274,17 @@ export function getExamUrl(idExamen, idGrupo, jwt = null) {
 /**
  * Visor legacy del curso. Fallback para los tipos de contenido cuya URL real
  * (`archivo.filepath`, SCORM, tareas) no viene en la respuesta de course-tree.
+ *
+ * Apunta a `/content_viewer_v2/`, que es donde quedó el visor legacy cuando esta
+ * SPA tomó `/content_viewer/`. Es importante que no apunte a `/content_viewer/`:
+ * el botón "Abrir en el visor clásico" reabriría esta misma SPA, y el alumno se
+ * quedaría dando vueltas sin llegar nunca al contenido que no sabemos embeber.
+ *
  * @param {number|string} idGrupo
  * @param {number|string} [socialId] - idInit del visor legacy
  */
 export function getLegacyViewerUrl(idGrupo, socialId) {
-  const base = `${getBaseDomain()}/content_viewer/index.php?idMateria=${encodeURIComponent(String(idGrupo))}&fromMalla=1&riesgo=0`;
+  const base = `${getBaseDomain()}/content_viewer_v2/index.php?idMateria=${encodeURIComponent(String(idGrupo))}&fromMalla=1&riesgo=0`;
   return socialId ? `${base}&idInit=${encodeURIComponent(String(socialId))}` : base;
 }
 

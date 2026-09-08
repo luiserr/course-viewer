@@ -3,11 +3,9 @@ import { useUser } from '../contexts/UserContext';
 import { getLoginUrl } from '../config/api';
 import { useCourseTree } from '../hooks/useCourseTree';
 import { useTcuBridge } from '../hooks/useTcuBridge';
-import { fixEncoding } from '../utils/text';
 import ContentFrame from './ContentFrame';
 import CourseSidebar from './CourseSidebar';
 import Navbar from './Navbar';
-import { BurgerIcon } from './Icons';
 import './CourseViewer.css';
 
 /**
@@ -68,6 +66,7 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
     selectedNode,
     upNext,
     selectNode,
+    markContentSeen,
     notify,
     dismissNotice,
     refresh,
@@ -123,29 +122,13 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
   // Las flechas del TCU navegan por el temario llamando a funciones del padre.
   useTcuBridge({
     flatContent,
+    currentNode: selectedNode,
+    currentResNum: resNum,
     onSelectNode: handleSelectNode,
     onFinish: () => notify('Ya viste el último contenido del temario.'),
-    onCheck: syncProgress
+    onCheck: syncProgress,
+    onContentSeen: markContentSeen
   });
-
-  /**
-   * Abre la evaluación enlazada a un TCU. Ese examen se deduplica del temario
-   * (para no listarlo dos veces), así que se arma un nodo sintético con su id.
-   */
-  const handleOpenLinkedExam = useCallback(
-    (node) => {
-      if (!node?.examId) return;
-      selectNode({
-        id: node.examId,
-        examId: node.examId,
-        type: 'examen',
-        title: `Evaluación · ${node.title}`,
-        is_complete: false,
-        locked: false
-      });
-    },
-    [selectNode]
-  );
 
   if (!idGrupo) {
     return (
@@ -181,7 +164,7 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
           <h2>Necesitas iniciar sesión</h2>
           <p>{sessionError || 'Inicia sesión en SaberesMX para ver el contenido de este curso.'}</p>
           <div className="cv-guard__actions">
-            <a className="cv-btn" href={getLoginUrl('courseViewer')}>Iniciar sesión</a>
+            <a className="cv-btn" href={getLoginUrl('content_viewer')}>Iniciar sesión</a>
             {sessionError && (
               <button type="button" className="cv-btn cv-btn--ghost" onClick={retryFetchUser}>
                 Reintentar
@@ -193,57 +176,17 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
     );
   }
 
-  const pct = Math.min(100, Math.max(0, progress));
-  const courseTitle = fixEncoding(course?.name || courseName || 'Contenido del curso');
-
   return (
     <div className="cv-shell">
-      <Navbar />
-
       {/*
-        Barra del curso: título y avance. Va fuera del panel lateral para que el
-        avance no se pierda de vista al bajar por el temario, y en compacto suma
-        la hamburguesa, porque allí el botón del panel queda bajo el velo.
+        En compacto la barra superior suma la hamburguesa del temario, porque
+        ahí el panel es un cajón y su propio botón queda debajo del velo.
       */}
-      <div className="cv-header">
-        {isCompact && (
-          <button
-            type="button"
-            className="cv-header__toggle"
-            aria-expanded={sidebarOpen}
-            aria-controls="cv-sidebar"
-            aria-label="Mostrar u ocultar el temario"
-            onClick={() => setSidebarOpen((open) => !open)}
-          >
-            <BurgerIcon />
-          </button>
-        )}
-
-        <h1 className="cv-header__title" title={courseTitle}>{courseTitle}</h1>
-
-        {totalItems > 0 && (
-          <div className="cv-header__progress">
-            <span className="cv-header__counts">
-              {completedItems} de {totalItems} contenidos
-              {syncing && <span className="cv-header__syncing"> · actualizando…</span>}
-            </span>
-            <div
-              className="cv-progress"
-              role="progressbar"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Avance del curso"
-            >
-              <div
-                className="cv-progress__bar"
-                style={{ width: pct > 0 ? `max(8px, ${pct}%)` : 0 }}
-              />
-            </div>
-            <span className="cv-header__percent">{progress}%</span>
-          </div>
-        )}
-      </div>
+      <Navbar
+        showSidebarToggle={isCompact}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen((open) => !open)}
+      />
 
       {notice && (
         <div className="cv-notice" role="status">
@@ -256,12 +199,17 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
         <div className="cv-layout__sidebar" id="cv-sidebar">
           <CourseSidebar
             course={course}
+            courseName={courseName}
             tree={tree}
             selectedId={selectedNode?.id ?? null}
             loading={loading}
             error={error}
             open={sidebarOpen}
             isCompact={isCompact}
+            progress={progress}
+            totalItems={totalItems}
+            completedItems={completedItems}
+            syncing={syncing}
             onSelectNode={handleSelectNode}
             onToggle={() => setSidebarOpen((o) => !o)}
             onExpand={openSidebar}
@@ -291,7 +239,6 @@ export default function CourseViewer({ idGrupo, socialId, riesgo = 0, courseName
             upNext={upNext}
             firstContent={flatContent[0] ?? null}
             onSelectNode={handleSelectNode}
-            onOpenLinkedExam={handleOpenLinkedExam}
           />
 
           <footer className="cv-footer">

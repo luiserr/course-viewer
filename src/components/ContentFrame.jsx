@@ -125,22 +125,19 @@ function WelcomePanel({ course, idGrupo, riesgo, firstContent, onStart }) {
  * ya pinta su propia navegación dentro del iframe, y un contador aquí
  * contradecía al del panel lateral (la lista plana no incluye los exámenes que
  * se abren desde su TCU, así que daba un total menor).
+ *
+ * Tampoco hay botón "Ir a la evaluación": `hasExam` sale de que el examen sea
+ * un submódulo del TCU (`tcu_modulo` con fila en `examen`), o sea que ya viene
+ * embebido como una de sus slides. El botón abría en el visor lo mismo que el
+ * alumno tenía delante.
  */
-function ContentNav({ node, upNext, onSelectNode, onOpenLinkedExam }) {
-  const goesToExam = node.type === 'tcu' && node.hasExam;
-  const label = goesToExam
-    ? 'Ir a la evaluación'
-    : upNext
-      ? `Siguiente: ${fixEncoding(upNext.title)}`
-      : null;
-  const onNext = goesToExam ? () => onOpenLinkedExam(node) : upNext ? () => onSelectNode(upNext) : null;
-
-  if (!onNext) return null;
+function ContentNav({ upNext, onSelectNode }) {
+  if (!upNext) return null;
 
   return (
     <div className="cv-nav">
-      <button type="button" className="cv-nav__next" onClick={onNext}>
-        <span className="cv-nav__nextLabel">{label}</span>
+      <button type="button" className="cv-nav__next" onClick={() => onSelectNode(upNext)}>
+        <span className="cv-nav__nextLabel">Siguiente: {fixEncoding(upNext.title)}</span>
         <ArrowRightIcon />
       </button>
     </div>
@@ -161,8 +158,7 @@ export default function ContentFrame({
   resNum,
   upNext,
   firstContent,
-  onSelectNode,
-  onOpenLinkedExam
+  onSelectNode
 }) {
   // Memorizado sobre el nodo, no sobre el JWT: el token se lee de
   // sessionStorage dentro de contentUrlFor y solo se refresca cuando el alumno
@@ -229,12 +225,7 @@ export default function ContentFrame({
         />
       </div>
 
-      <ContentNav
-        node={node}
-        upNext={upNext}
-        onSelectNode={onSelectNode}
-        onOpenLinkedExam={onOpenLinkedExam}
-      />
+      <ContentNav upNext={upNext} onSelectNode={onSelectNode} />
     </div>
   );
 }

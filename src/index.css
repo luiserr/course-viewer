@@ -82,7 +82,6 @@
   --cv-shadow-menu: 0 12px 32px rgba(36, 31, 32, 0.18);
 
   --cv-navbar-height: 66px;
-  --cv-header-height: 62px;
   /* Hueco entre los paneles flotantes y el borde del fondo */
   --cv-gap: 14px;
 
@@ -109,7 +108,6 @@
 @media (max-width: 767.98px) {
   :root {
     --cv-navbar-height: 58px;
-    --cv-header-height: 56px;
   }
 }
 

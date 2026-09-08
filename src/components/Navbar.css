@@ -1,5 +1,10 @@
 /* Barra superior — sistema de diseño del mockup */
 
+/*
+ * Barra fija de plataforma: marca a la izquierda, cuenta a la derecha. Lo que
+ * enmarca al curso (nombre y avance) vive en la tarjeta del panel lateral, bajo
+ * la portada — aquí solo se suma la hamburguesa que abre ese panel en compacto.
+ */
 .cv-navbar {
   position: fixed;
   top: 0;
@@ -11,16 +16,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
   padding: 0 clamp(14px, 2.5vw, 26px);
   background: var(--cv-primary);
+}
+
+/* Bloque de identidad: hamburguesa (solo compacto) y logo */
+.cv-navbar__lead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .cv-navbar__brand {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
   min-width: 0;
-  flex-shrink: 1;
   padding: 8px 0;
 }
 
@@ -31,6 +45,8 @@
   object-position: left center;
 }
 
+/* ---------------- Cuenta ---------------- */
+
 .cv-navbar__actions {
   display: flex;
   align-items: center;
@@ -38,7 +54,7 @@
   gap: 14px;
 }
 
-/* Botón de inicio: cuadrado redondeado translúcido, como en el mockup */
+/* Botón cuadrado redondeado translúcido: inicio y hamburguesa del temario */
 .cv-navbar__icon {
   display: inline-flex;
   align-items: center;
@@ -46,9 +62,12 @@
   flex: 0 0 auto;
   width: 38px;
   height: 38px;
+  border: 0;
+  padding: 0;
   border-radius: var(--cv-radius-md);
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
+  cursor: pointer;
   transition: background var(--cv-duration) var(--cv-ease);
 }
 
@@ -164,9 +183,21 @@
 }
 
 @media (max-width: 767.98px) {
+  .cv-navbar {
+    gap: 10px;
+  }
+
+  .cv-navbar__actions {
+    gap: 10px;
+  }
+
   .cv-navbar__userName,
   .cv-navbar__userBtn .cv-chevron {
     display: none;
+  }
+
+  .cv-navbar__brand img {
+    max-width: 148px;
   }
 
   .cv-navbar__userBtn {
