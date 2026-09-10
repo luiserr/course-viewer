@@ -34,7 +34,6 @@ const FOCUS_SYNC_INTERVAL = 5000;
 export function useCourseTree(idGrupo, { enabled = true } = {}) {
   const [tree, setTree] = useState([]);
   const [progress, setProgress] = useState(0);
-  const [totals, setTotals] = useState({ totalItems: 0, completedItems: 0 });
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,6 +46,21 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
   // examen enlazado a un TCU, que se deduplica del temario) se usa tal cual.
   const displayTree = useMemo(() => buildDisplayTree(tree), [tree]);
   const flatContent = useMemo(() => flattenContent(displayTree), [displayTree]);
+
+  // El contador "X de Y contenidos" se cuenta sobre el árbol que realmente se
+  // pinta, no sobre el totalItems/completedItems de course-tree: el backend
+  // cuenta todos los posts del curso, incluidos los exámenes que ya se
+  // alcanzan desde su TCU, y buildDisplayTree los deduplica del temario. Ese
+  // total salía más alto que las palomitas visibles (un curso con dos
+  // exámenes enlazados mostraba "11 de 11" sobre 9 filas). Contando aquí, el
+  // contador y las casillas no pueden volver a divergir.
+  const { totalItems, completedItems } = useMemo(
+    () => ({
+      totalItems: flatContent.length,
+      completedItems: flatContent.filter((n) => n.is_complete).length
+    }),
+    [flatContent]
+  );
   const selectedNode = useMemo(
     () => (selection ? findNodeInTree(displayTree, selection.id) ?? selection : null),
     [displayTree, selection]
@@ -66,7 +80,6 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
         const data = await fetchCourseTree(idGrupo);
         setTree(data.tree);
         setProgress(data.progress);
-        setTotals({ totalItems: data.totalItems, completedItems: data.completedItems });
       } catch (err) {
         const info = handleApiError(err, 'course-tree');
         setError(info.message);
@@ -244,8 +257,8 @@ export function useCourseTree(idGrupo, { enabled = true } = {}) {
     tree: displayTree,
     flatContent,
     progress,
-    totalItems: totals.totalItems,
-    completedItems: totals.completedItems,
+    totalItems,
+    completedItems,
     loading,
     error,
     syncing,
