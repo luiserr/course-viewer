@@ -31,8 +31,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
 
-/** Ruta del módulo relativa a la raíz de schoolCode (School/content_viewer) */
-const DEFAULT_TARGET_RELATIVE_PATH = join('School', 'content_viewer');
+/** Ruta del módulo relativa a la raíz de schoolCode (School/content_viewer_v3) */
+const DEFAULT_TARGET_RELATIVE_PATH = join('School', 'content_viewer_v3');
 
 /** Variables que el script lee del .env local */
 const ENV_KEYS = ['LXP_SCHOOL_CODE_ROOT', 'LXP_TARGET_RELATIVE_PATH'];

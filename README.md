@@ -2,12 +2,12 @@
 
 Front (Vite + React) del visor de cursos de SaberesMX: recreación en React del
 módulo `content_viewer` (temario lateral + contenido + avance). Se despliega como
-módulo del backend PHP en `School/courseViewer` del repo `LXP/schoolCode`.
+módulo del backend PHP en `School/content_viewer_v3` del repo `LXP/schoolCode`.
 
 URL del visor, con los mismos parámetros que el visor legacy:
 
 ```
-/courseViewer/?idInit=<socialId>&idMateria=<idGrupo>&fromMalla=1&riesgo=0
+/content_viewer_v3/?idInit=<socialId>&idMateria=<idGrupo>&fromMalla=1&riesgo=0
 ```
 
 `idMateria` es el id del curso (en la BD `idmateria` e `idgrupo` son el mismo
@@ -280,7 +280,7 @@ petición. Así `/api/saberes/user` llega a `.../src/saberes/user`.
 1. Borra `dist/`.
 2. Borra `<destino>/assets`.
 3. Corre `vite build` (los assets salen como `index-<timestamp>.js|css`, y `base` queda
-   en `/courseViewer/` para que las rutas resuelvan bajo el módulo PHP).
+   en `/content_viewer_v3/` para que las rutas resuelvan bajo el módulo PHP).
 4. Copia `dist/assets` → `<destino>/assets`.
 5. Lee los nombres reales del JS y CSS de `dist/index.html` y actualiza
    `const BUILD_JS` / `const BUILD_CSS` en `<destino>/index.php`.
@@ -293,7 +293,7 @@ La raíz del repo school **no está hardcodeada**. Se resuelve en este orden:
 2. `.env` del proyecto (`LXP_SCHOOL_CODE_ROOT=...`)
 3. `deploy.config.json` (`schoolCodeRoot`) — copia de `deploy.config.example.json`
 
-La ruta del módulo es `School/courseViewer` por defecto; se puede cambiar con
+La ruta del módulo es `School/content_viewer_v3` por defecto; se puede cambiar con
 `targetRelativePath` en `deploy.config.json` o con `LXP_TARGET_RELATIVE_PATH`.
 Si la cambias, ajusta también `MODULE_DIR` en `vite.config.js` (define el `base` de
 los assets).
@@ -306,8 +306,8 @@ La carpeta destino y su `index.php` deben existir antes del primer despliegue; e
 no los crea. Usa la plantilla `deploy/index.php.template`:
 
 ```bash
-mkdir <LXP_SCHOOL_CODE_ROOT>/School/courseViewer
-cp deploy/index.php.template <LXP_SCHOOL_CODE_ROOT>/School/courseViewer/index.php
+mkdir <LXP_SCHOOL_CODE_ROOT>/School/content_viewer_v3
+cp deploy/index.php.template <LXP_SCHOOL_CODE_ROOT>/School/content_viewer_v3/index.php
 ```
 
 El `index.php` debe declarar `const BUILD_JS = '...';` y `const BUILD_CSS = '...';` al

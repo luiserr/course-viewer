@@ -8,7 +8,7 @@ import react from '@vitejs/plugin-react'
  * Debe coincidir con `targetRelativePath` de deploy.config.json / scripts/build-deploy.mjs,
  * porque de ella depende la base con la que se resuelven los assets en producción.
  */
-const MODULE_DIR = 'content_viewer'
+const MODULE_DIR = 'content_viewer_v3'
 
 /** Target por defecto del proxy de desarrollo (entorno local de pruebas) */
 const DEFAULT_PROXY_TARGET = 'http://saberesmx.pruebas.local/src'
